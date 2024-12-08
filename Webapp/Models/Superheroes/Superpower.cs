@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Webapp.Models.Superheroes;
 
-public partial class Superpower
+public class Superpower
 {
     public int Id { get; set; }
-
-    public string? PowerName { get; set; }
+    public string PowerName { get; set; }
+    public virtual ICollection<HeroPower> HeroPowers { get; set; }
 }

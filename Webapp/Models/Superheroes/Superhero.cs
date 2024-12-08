@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Webapp.Models.Superheroes;
 
@@ -43,4 +44,5 @@ public partial class Superhero
 
     public virtual Colour? SkinColour { get; set; }
     
+    public virtual ICollection<HeroPower> HeroPowers { get; set; } = new List<HeroPower>();
 }

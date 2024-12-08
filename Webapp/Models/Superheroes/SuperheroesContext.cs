@@ -36,6 +36,7 @@ public partial class SuperheroesContext : DbContext
 
     public virtual DbSet<Superpower> Superpowers { get; set; }
     
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Alignment>(entity =>
@@ -107,23 +108,23 @@ public partial class SuperheroesContext : DbContext
             entity.HasOne(d => d.Hero).WithMany().HasForeignKey(d => d.HeroId);
         });
 
-        modelBuilder.Entity<HeroPower>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToTable("hero_power");
+            modelBuilder.Entity<HeroPower>(entity =>
+            {
+                entity.ToTable("hero_power");
+                
+                entity.HasKey(e => new { e.HeroId, e.PowerId });
+                
+                entity.HasOne(d => d.Hero)
+                    .WithMany(p => p.HeroPowers)
+                    .HasForeignKey(d => d.HeroId);
+                    
+                entity.HasOne(d => d.Power)
+                    .WithMany(p => p.HeroPowers)
+                    .HasForeignKey(d => d.PowerId);
 
-            entity.Property(e => e.HeroId)
-                .HasDefaultValueSql("NULL")
-                .HasColumnName("hero_id");
-            entity.Property(e => e.PowerId)
-                .HasDefaultValueSql("NULL")
-                .HasColumnName("power_id");
-
-            entity.HasOne(d => d.Hero).WithMany().HasForeignKey(d => d.HeroId);
-
-            entity.HasOne(d => d.Power).WithMany().HasForeignKey(d => d.PowerId);
-        });
+                entity.Property(e => e.HeroId).HasColumnName("hero_id");
+                entity.Property(e => e.PowerId).HasColumnName("power_id");
+            });
 
         modelBuilder.Entity<Publisher>(entity =>
         {
@@ -189,6 +190,7 @@ public partial class SuperheroesContext : DbContext
             entity.Property(e => e.WeightKg)
                 .HasDefaultValueSql("NULL")
                 .HasColumnName("weight_kg");
+           
 
             entity.HasOne(d => d.Alignment).WithMany(p => p.Superheroes).HasForeignKey(d => d.AlignmentId);
 

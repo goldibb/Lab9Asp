@@ -1,12 +1,9 @@
 @model IEnumerable<Webapp.Models.Superheroes.Superhero>
-
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 <h1>Index</h1>
-
 <p>
     <a class="btn btn-primary" asp-action="Create">Dodaj Nowego Superbohatera</a>
 </p>
@@ -24,6 +21,9 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.WeightKg)
+            </th>
+            <th>
+                Hero Powers
             </th>
         </tr>
     </thead>
@@ -43,9 +43,10 @@
                 @Html.DisplayFor(modelItem => item.WeightKg)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                @foreach (var power in item.HeroPowers)
+                {
+                    @Html.DisplayFor(modelItem => power.Power.PowerName) <br />
+                }
             </td>
         </tr>
 }

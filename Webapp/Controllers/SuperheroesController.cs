@@ -21,7 +21,16 @@ namespace Webapp.Controllers
         // GET: Superheroes
         public async Task<IActionResult> Index()
         {
-            var superheroesContext = _context.Superheroes.Include(s => s.Alignment).Include(s => s.EyeColour).Include(s => s.Gender).Include(s => s.HairColour).Include(s => s.Publisher).Include(s => s.Race).Include(s => s.SkinColour);
+            var superheroesContext = _context.Superheroes
+                .Include(s => s.Alignment)
+                .Include(s => s.EyeColour)
+                .Include(s => s.Gender)
+                .Include(s => s.HairColour)
+                .Include(s => s.Publisher)
+                .Include(s => s.Race)
+                .Include(s => s.SkinColour)
+                .Include(s => s.HeroPowers)
+                .ThenInclude(hp => hp.Power);
             return View(await superheroesContext.ToListAsync());
         }
 
@@ -41,6 +50,7 @@ namespace Webapp.Controllers
                 .Include(s => s.Publisher)
                 .Include(s => s.Race)
                 .Include(s => s.SkinColour)
+                .Include(s => s.HeroPowers)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (superhero == null)
             {
