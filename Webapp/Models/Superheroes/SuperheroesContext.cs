@@ -217,6 +217,8 @@ public partial class SuperheroesContext : DbContext
             entity.Property(e => e.PowerName)
                 .HasDefaultValueSql("NULL")
                 .HasColumnName("power_name");
+            
+            entity.HasMany(d => d.HeroPowers).WithOne(p => p.Power).HasForeignKey(d => d.PowerId);
         });
 
         OnModelCreatingPartial(modelBuilder);

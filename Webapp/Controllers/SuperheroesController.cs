@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -19,9 +20,12 @@ namespace Webapp.Controllers
         }
 
         // GET: Superheroes
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? page)
         {
-            var superheroesContext = _context.Superheroes
+            int pageSize = 10; // Number of items per page
+            int pageNumber = page ?? 1;
+
+            var superheroes = _context.Superheroes
                 .Include(s => s.Alignment)
                 .Include(s => s.EyeColour)
                 .Include(s => s.Gender)
@@ -29,9 +33,11 @@ namespace Webapp.Controllers
                 .Include(s => s.Publisher)
                 .Include(s => s.Race)
                 .Include(s => s.SkinColour)
-                .Include(s => s.HeroPowers)
-                .ThenInclude(hp => hp.Power);
-            return View(await superheroesContext.ToListAsync());
+                .AsQueryable();
+
+            var paginatedList = await PaginatedList<Superhero>.CreateAsync(superheroes, pageNumber, pageSize);
+
+            return View(paginatedList);
         }
 
         // GET: Superheroes/Details/5
@@ -58,6 +64,26 @@ namespace Webapp.Controllers
             }
 
             return View(superhero);
+        }
+        public async Task<IActionResult> SuperPowerList(int page = 1,int size = 10)
+        {
+            var superPowerCounts = await _context.Superpowers
+                .Select(sp => new
+                {
+                    PowerName = sp.PowerName,
+                    SuperheroCount = sp.HeroPowers.Count
+                })
+                .ToListAsync();
+
+            var viewModel = superPowerCounts.Select(sp => new SuperPowerViewModel
+            {
+                PowerName = sp.PowerName,
+                SuperheroCount = sp.SuperheroCount
+            }).ToList();
+
+            return View(viewModel
+                .Skip(size*(page-1))
+                .Take(size));
         }
 
         // GET: Superheroes/Create

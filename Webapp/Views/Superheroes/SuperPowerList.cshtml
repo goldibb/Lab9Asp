@@ -1,0 +1,22 @@
+﻿@model IEnumerable<Webapp.Models.Superheroes.SuperPowerViewModel>
+@{
+    ViewData["Title"] = "Superpower List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h1>Superpower List</h1>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Superpower Name</th>
+        <th>Number of Superheroes</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td>@item.PowerName</td>
+            <td>@item.SuperheroCount</td>
+        </tr>
+    }
+    </tbody>
+</table>

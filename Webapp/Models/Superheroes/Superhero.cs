@@ -44,5 +44,6 @@ public partial class Superhero
 
     public virtual Colour? SkinColour { get; set; }
     
+    
     public virtual ICollection<HeroPower> HeroPowers { get; set; } = new List<HeroPower>();
 }
