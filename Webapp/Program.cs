@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Webapp.Models.Movies;
 using Webapp.Models.Superheroes;
+using WebApp.Models;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace Webapp;
 
@@ -11,7 +13,9 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
+        builder.Services.AddRazorPages();
+        builder.Services.AddMemoryCache();
+        builder.Services.AddSession();
         builder.Services.AddControllersWithViews();
 
         // Register MoviesDbContext
@@ -19,7 +23,13 @@ public class Program
         {
             op.UseSqlite(builder.Configuration["MoviesDatabase:ConnectionString"]);
         });
-        
+
+        // Register AppDbContext
+        builder.Services.AddDbContext<AppDbContext>(op =>
+        {
+            op.UseSqlite(builder.Configuration["AccountDatabase:ConnectionString"]);
+        });
+
         // Register SuperheroesContext with Identity
         builder.Services.AddDbContext<SuperheroesContext>(options =>
         {
@@ -27,17 +37,18 @@ public class Program
         });
 
         // Add Identity services
-        builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+        builder.Services.AddDefaultIdentity<IdentityUser>(options =>
             {
-                // Password settings if you want to customize
-                options.Password.RequireDigit = true;
-                options.Password.RequiredLength = 8;
-                options.Password.RequireNonAlphanumeric = true;
-                options.Password.RequireUppercase = true;
-                options.Password.RequireLowercase = true;
+                options.SignIn.RequireConfirmedAccount = true;
+                options.Password.RequireDigit = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 5;
             })
-            .AddEntityFrameworkStores<SuperheroesContext>()
-            .AddDefaultTokenProviders();
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<AppDbContext>();
+        // Register IEmailSender service
+        builder.Services.AddTransient<IEmailSender, EmailSender>();
 
         var app = builder.Build();
 
@@ -56,11 +67,23 @@ public class Program
         // Add these lines for authentication
         app.UseAuthentication();
         app.UseAuthorization();
+        app.UseSession();
+        app.MapRazorPages();
 
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
 
         app.Run();
+    }
+}
+
+// Simple implementation of IEmailSender
+public class EmailSender : IEmailSender
+{
+    public Task SendEmailAsync(string email, string subject, string htmlMessage)
+    {
+        // Implement your email sending logic here
+        return Task.CompletedTask;
     }
 }
