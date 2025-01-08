@@ -1,31 +1,127 @@
-@model Webapp.Models.Superheroes.Superhero
+@model SuperheroViewModel
 
-@{
-    ViewData["Title"] = "Create";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
+<h2>Dodaj nowego superbohatera</h2>
 
-<h1>Create</h1>
-
-<h4>Superhero</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="form-group">
+        <label asp-for="SuperheroName">Nazwa superbohatera</label>
+        <input asp-for="SuperheroName" class="form-control" required />
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div class="form-group">
+        <label asp-for="FullName">Pełne imię</label>
+        <input asp-for="FullName" class="form-control" required />
+    </div>
 
+    <div class="form-group">
+        <label asp-for="GenderId">Płeć</label>
+        <select asp-for="GenderId" class="form-control" required>
+            <option value="">-- Wybierz płeć --</option>
+            @foreach(var gender in Model.Genders)
+            {
+                <option value="@gender.Value">@gender.Text</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="EyeColourId">Kolor oczu</label>
+        <select asp-for="EyeColourId" class="form-control" required>
+            <option value="">-- Wybierz kolor oczu --</option>
+            @foreach(var color in Model.EyeColours)
+            {
+                <option value="@color.Value">@color.Text</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="HairColourId">Kolor włosów</label>
+        <select asp-for="HairColourId" class="form-control" required>
+            <option value="">-- Wybierz kolor włosów --</option>
+            @foreach(var color in Model.HairColours)
+            {
+                <option value="@color.Value">@color.Text</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="SkinColourId">Kolor skóry</label>
+        <select asp-for="SkinColourId" class="form-control" required>
+            <option value="">-- Wybierz kolor skóry --</option>
+            @foreach(var color in Model.SkinColours)
+            {
+                <option value="@color.Value">@color.Text</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="RaceId">Rasa</label>
+        <select asp-for="RaceId" class="form-control" required>
+            <option value="">-- Wybierz rasę --</option>
+            @foreach(var race in Model.Races)
+            {
+                <option value="@race.Value">@race.Text</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PublisherId">Wydawca</label>
+        <select asp-for="PublisherId" class="form-control" required>
+            <option value="">-- Wybierz wydawcę --</option>
+            @foreach(var publisher in Model.Publishers)
+            {
+                <option value="@publisher.Value">@publisher.Text</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="AlignmentId">Alignment</label>
+        <select asp-for="AlignmentId" class="form-control" required>
+            <option value="">-- Wybierz alignment --</option>
+            @foreach(var alignment in Model.Alignments)
+            {
+                <option value="@alignment.Value">@alignment.Text</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="HeightCm">Wzrost (cm)</label>
+        <input asp-for="HeightCm" type="number" class="form-control" min="0" required />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="WeightKg">Waga (kg)</label>
+        <input asp-for="WeightKg" type="number" class="form-control" min="0" required />
+    </div>
+
+    <div class="form-group">
+        <label>Supermoce</label>
+        <select asp-for="SelectedPowers" asp-items="Model.AvailablePowers" class="form-control" multiple>
+        </select>
+        <small class="form-text text-muted">Przytrzymaj Ctrl aby wybrać więcej niż jedną moc</small>
+    </div>
+    <div class="form-group">
+        <label>Atrybuty</label>
+        @if (Model.AttributeValues != null && Model.AttributeValues.Any())
+        {
+            @for (var i = 0; i < Model.AttributeValues.Count; i++)
+            {
+                <div class="row">
+                    <div class="col">
+                        <input type="hidden" asp-for="@Model.AttributeValues[i].AttributeId" />
+                        <label>@Model.AttributeValues[i].AttributeName</label>
+                        <input type="number" class="form-control" asp-for="@Model.AttributeValues[i].Value" min="0" MAX="10" required />
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    <button type="submit" class="btn btn-primary">Zapisz</button>
+
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }
+</form>

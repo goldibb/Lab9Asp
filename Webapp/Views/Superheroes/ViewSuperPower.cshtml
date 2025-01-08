@@ -1,0 +1,24 @@
+﻿@model Webapp.Models.Superheroes.Superhero
+
+@{
+    ViewBag.Title = "Superhero Powers";
+    Layout = "_Layout";
+}
+
+<h2>@Model.SuperheroName</h2>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Power Name</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var heroPower in Model.HeroPowers)
+    {
+        <tr>
+            <td>@heroPower.Power.PowerName</td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -90,9 +90,10 @@ public partial class SuperheroesContext : DbContext
         modelBuilder.Entity<HeroAttribute>(entity =>
         {
             entity
-                .HasNoKey()
                 .ToTable("hero_attribute");
 
+            entity.HasKey(e => new { e.HeroId, e.AttributeId });
+            
             entity.Property(e => e.AttributeId)
                 .HasDefaultValueSql("NULL")
                 .HasColumnName("attribute_id");

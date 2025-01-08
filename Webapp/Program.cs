@@ -34,6 +34,8 @@ public class Program
         builder.Services.AddDbContext<SuperheroesContext>(options =>
         {
             options.UseSqlite(builder.Configuration["SuperheroDatabase:ConnectionString"]);
+            options.EnableSensitiveDataLogging();
+            options.EnableDetailedErrors();
         });
 
         // Add Identity services
@@ -49,6 +51,14 @@ public class Program
             .AddEntityFrameworkStores<AppDbContext>();
         // Register IEmailSender service
         builder.Services.AddTransient<IEmailSender, EmailSender>();
+
+        // Add logging services
+        builder.Services.AddLogging(logging =>
+        {
+            logging.ClearProviders();
+            logging.AddDebug();
+            logging.AddConsole();
+        });
 
         var app = builder.Build();
 

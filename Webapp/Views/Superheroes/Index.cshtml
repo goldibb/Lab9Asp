@@ -45,10 +45,7 @@
                 @Html.DisplayFor(modelItem => item.WeightKg)
             </td>
             <td>
-                @foreach (var power in item.HeroPowers)
-                {
-                    @Html.DisplayFor(modelItem => power.Power.PowerName) <br />
-                }
+                    <a class="btn btn-primary" asp-action="ViewSuperPower" asp-controller="Superheroes" asp-route-id=@item.Id>Sprawdź Moce Bohatera</a>
             </td>
         </tr>
     }
