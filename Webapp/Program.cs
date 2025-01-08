@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Webapp.Models.Movies;
 using Webapp.Models.Superheroes;
 using WebApp.Models;
+using Microsoft.Data.Sqlite;
 using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace Webapp;
@@ -21,19 +22,40 @@ public class Program
         // Register MoviesDbContext
         builder.Services.AddDbContext<MoviesDbContext>(op =>
         {
-            op.UseSqlite(builder.Configuration["MoviesDatabase:ConnectionString"]);
+            try
+            {
+                op.UseSqlite(builder.Configuration["MoviesDatabase:ConnectionString"]);
+            }
+            catch (SqliteException)
+            {
+                op.UseSqlite(builder.Configuration["MoviesDatabase:ConnectionStringUpperCase"]);
+            }
         });
 
-        // Register AppDbContext
+// For AppDbContext
         builder.Services.AddDbContext<AppDbContext>(op =>
         {
-            op.UseSqlite(builder.Configuration["AccountDatabase:ConnectionString"]);
+            try
+            {
+                op.UseSqlite(builder.Configuration["AccountDatabase:ConnectionString"]);
+            }
+            catch (SqliteException)
+            {
+                op.UseSqlite(builder.Configuration["AccountDatabase:ConnectionStringUpperCase"]);
+            }
         });
 
-        // Register SuperheroesContext with Identity
+// For SuperheroesContext
         builder.Services.AddDbContext<SuperheroesContext>(options =>
         {
-            options.UseSqlite(builder.Configuration["SuperheroDatabase:ConnectionString"]);
+            try
+            {
+                options.UseSqlite(builder.Configuration["SuperheroDatabase:ConnectionString"]);
+            }
+            catch (SqliteException)
+            {
+                options.UseSqlite(builder.Configuration["SuperheroDatabase:ConnectionStringUpperCase"]);
+            }
             options.EnableSensitiveDataLogging();
             options.EnableDetailedErrors();
         });
