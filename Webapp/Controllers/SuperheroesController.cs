@@ -67,25 +67,17 @@ namespace Webapp.Controllers
 
             return View(superhero);
         }
-        public async Task<IActionResult> SuperPowerList(int page = 1,int size = 10)
+        public async Task<IActionResult> SuperPowerList(int page = 1, int size = 10)
         {
-            var superPowerCounts = await _context.Superpowers
-                .Select(sp => new
+            var superPowerCounts = _context.Superpowers
+                .Select(sp => new SuperPowerViewModel
                 {
                     PowerName = sp.PowerName,
                     SuperheroCount = sp.HeroPowers.Count
-                })
-                .ToListAsync();
+                });
 
-            var viewModel = superPowerCounts.Select(sp => new SuperPowerViewModel
-            {
-                PowerName = sp.PowerName,
-                SuperheroCount = sp.SuperheroCount
-            }).ToList();
-
-            return View(viewModel
-                .Skip(size*(page-1))
-                .Take(size));
+            var paginatedList = await PaginatedList<SuperPowerViewModel>.CreateAsync(superPowerCounts, page, size);
+            return View(paginatedList);
         }
 
         // GET: Superheroes/Create
