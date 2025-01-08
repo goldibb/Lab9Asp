@@ -348,18 +348,27 @@ namespace Webapp.Controllers
             return _context.Superheroes.Any(e => e.Id == id);
         }
 
-        public async Task<IActionResult> ViewSuperPower(int id)
+        public IActionResult ViewSuperPower(int id)
         {
-            var superhero = await _context.Superheroes
+            var superheroWithPowers = _context.Superheroes
                 .Include(s => s.HeroPowers)
                 .ThenInclude(hp => hp.Power)
-                .FirstOrDefaultAsync(s => s.Id == id);
+                .FirstOrDefault(s => s.Id == id);
 
-            if (superhero == null)
-            {
+            if (superheroWithPowers == null)
                 return NotFound();
-            }
-            return View(superhero);
+
+            var powerDetails = superheroWithPowers.HeroPowers
+                .Select(hp => new SuperPowerViewModel
+                {
+                    PowerName = hp.Power.PowerName,
+                    SuperheroCount = _context.HeroPowers
+                        .Count(other => other.PowerId == hp.PowerId && other.HeroId != id)
+                })
+                .ToList();
+
+            ViewBag.SuperheroName = superheroWithPowers.SuperheroName;
+            return View(powerDetails);
         }
     }
 }

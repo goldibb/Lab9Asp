@@ -1,24 +1,21 @@
-﻿@model Webapp.Models.Superheroes.Superhero
+﻿@model List<Webapp.Models.Superheroes.SuperPowerViewModel>
 
-@{
-    ViewBag.Title = "Superhero Powers";
-    Layout = "_Layout";
-}
+<h2>Moce bohatera: @ViewBag.SuperheroName</h2>
 
-<h2>@Model.SuperheroName</h2>
-
-<table class="table">
+<table class="table table-striped">
     <thead>
-    <tr>
-        <th>Power Name</th>
-    </tr>
+        <tr>
+            <th>Nazwa mocy</th>
+            <th>Liczba innych bohaterów z tą mocą</th>
+        </tr>
     </thead>
     <tbody>
-    @foreach (var heroPower in Model.HeroPowers)
-    {
-        <tr>
-            <td>@heroPower.Power.PowerName</td>
-        </tr>
-    }
+        @foreach (var power in Model)
+        {
+            <tr>
+                <td>@power.PowerName</td>
+                <td>@power.SuperheroCount</td>
+            </tr>
+        }
     </tbody>
 </table>
